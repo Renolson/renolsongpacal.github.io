@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Smart GPA Calculator</title>
-    <!-- Google Fonts: Poppins for headings, Inter for body text -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
     <style>
         /* CSS Variables for a clean, cohesive theme */
@@ -212,16 +211,9 @@
             margin-bottom: 15px;
             text-align: center;
             cursor: pointer; /* Indicate it's editable */
-            text-decoration: none; /* Remove default underline */
-            border-bottom: 1px dashed transparent; /* Dashed border for hover */
-            transition: border-color 0.3s ease;
         }
         .semester h3:hover {
-            border-bottom-color: var(--primary-light); /* Show dashed underline on hover */
-        }
-        .semester h3:focus {
-            outline: none;
-            border-bottom-color: var(--secondary-accent); /* Solid underline on focus/edit */
+            text-decoration: underline; /* Visual cue for editability */
         }
         .semester h3.editing {
             cursor: text; /* Change cursor when editing */
@@ -327,71 +319,6 @@
             z-index: 9999; /* Ensure it's on top */
             pointer-events: none; /* Allow clicks to pass through */
         }
-
-        /* Reset Confirmation Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000; /* Above everything else */
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-        .modal-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        .modal-content {
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            max-width: 400px;
-            transform: translateY(-20px);
-            opacity: 0;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-        }
-        .modal-overlay.show .modal-content {
-            transform: translateY(0);
-            opacity: 1;
-        }
-        .modal-content h3 {
-            color: var(--primary-dark);
-            margin-bottom: 20px;
-        }
-        .modal-content p {
-            margin-bottom: 25px;
-            color: var(--text-light);
-            font-size: 1rem;
-        }
-        .modal-buttons button {
-            margin: 0 10px;
-            padding: 10px 20px;
-            font-size: 1rem;
-        }
-        .modal-buttons .confirm-btn {
-            background: linear-gradient(45deg, #ef4444, #dc2626); /* Red for confirm */
-        }
-        .modal-buttons .confirm-btn:hover {
-            background: linear-gradient(45deg, #dc2626, #b91c1c);
-        }
-        .modal-buttons .cancel-btn {
-            background: var(--border-light); /* Grey for cancel */
-            color: var(--text-dark);
-        }
-        .modal-buttons .cancel-btn:hover {
-            background: #cbd5e1;
-            color: var(--text-dark);
-        }
-
 
         @media (max-width: 768px) {
             body {
@@ -524,13 +451,12 @@
             /* Suppress browser default headers/footers */
             @page {
                 margin: 0.5in; /* Standard margins */
-                size: letter; /* Or A4, depending on common paper size */
-                @top-left { content: ""; }
-                @top-center { content: ""; }
-                @top-right { content: ""; }
-                @bottom-left { content: ""; }
-                @bottom-center { content: ""; }
-                @bottom-right { content: ""; }
+                @top-left { content: none; }
+                @top-center { content: none; }
+                @top-right { content: none; }
+                @bottom-left { content: none; }
+                @bottom-center { content: none; }
+                @bottom-right { content: none; }
             }
 
             body {
@@ -539,30 +465,40 @@
                 padding: 0;
                 margin: 0;
                 font-size: 11pt;
+                -webkit-print-color-adjust: exact; /* Ensures backgrounds/colors are printed */
+                print-color-adjust: exact;
             }
             .container {
                 box-shadow: none;
-                padding: 0; /* Remove container padding for print */
+                padding: 20px;
                 border: none;
                 border-radius: 0;
-                gap: 0; /* Remove gap between sections for print */
+                gap: 0; /* **IMPORTANT: Remove gap in print to fix spacing between sections** */
+                /* Max-width might cause gaps if content is smaller. Remove or set to 100% */
                 max-width: 100%; 
-                width: 100%;
+                display: block; /* Ensure it behaves like a block for print flow */
             }
-            /* Hide the main H1 from the screen view during print */
-            h1 { 
-                display: none !important; /* Hide original H1 as report section has its own title */
-            }
-            h2, h3 {
+            /* Correct H1 and H2 styling for print to remove unwanted space */
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 15px; /* Keep reasonable space below H1 */
+                text-align: center; /* Center H1 for print as well */
                 color: #000 !important;
                 background: none !important;
                 -webkit-text-fill-color: initial !important;
                 text-shadow: none;
-                text-align: left; /* Align headings left for print */
-                margin-bottom: 5px; /* Tighter spacing */
             }
-            h2 { font-size: 1.5rem; margin-bottom: 8px; } /* Tighter spacing */
-            h3 { font-size: 1.2rem; margin-bottom: 5px; } /* Tighter spacing */
+            h2 {
+                font-size: 1.5rem;
+                margin-top: 20px; /* Add some margin above H2 to separate from H1 or previous content */
+                margin-bottom: 10px;
+                text-align: center; /* Center H2 for print as well */
+                color: #000 !important;
+                background: none !important;
+                -webkit-text-fill-color: initial !important;
+                text-shadow: none;
+            }
+            h3 { font-size: 1.2rem; margin-bottom: 10px; }
             h2::after { display: none; } /* Hide underline */
 
             /* Hide all functional elements and input sections */
@@ -570,8 +506,7 @@
             .semester-controls,
             .grade-scale,
             .message,
-            .semesters, /* Hide the entire input section */
-            .modal-overlay { /* Hide the modal if it happens to be open */
+            .semesters { /* Hide the entire input section */
                 display: none !important;
             }
 
@@ -581,34 +516,23 @@
                 box-shadow: none;
                 padding: 0;
                 text-align: left;
-                page-break-before: auto; /* Allow break before the report section if it's not the first thing on the page */
-                page-break-after: auto; /* Allow break after the report section */
+                page-break-inside: avoid; /* Keep report section together if possible */
+                width: 100%; /* Ensure it takes full width in print */
             }
-            /* New class for the summary part of the report */
-            .report-summary-print {
-                padding: 15px 20px; /* Add some padding to the summary section */
-                background-color: #e0f2f7; /* Light blue background for summary */
-                border-bottom: 1px solid #cce7ff; /* Subtle border below summary */
-                margin-bottom: 15px; /* Space before first detail table */
-                page-break-inside: avoid; /* Keep summary together */
-            }
-
             .overall-gpa {
-                font-size: 2.5rem; /* Slightly smaller for report formality */
+                font-size: 3rem;
                 color: var(--primary-dark) !important;
                 text-align: left;
-                margin: 5px 0; /* Tighter spacing */
+                margin: 10px 0;
             }
             .report hr {
-                border-top: 1px solid #ccc; /* Solid line for report */
-                width: 80%; /* Shorter line */
-                margin: 10px 0; /* Tighter spacing */
+                border-top: 1px solid #ccc;
+                width: 100%;
+                margin: 15px 0;
             }
             .semester-gpa-item {
-                font-size: 1rem; /* Standard font size */
                 text-align: left !important;
                 padding-left: 0 !important;
-                margin-bottom: 4px; /* Tighter spacing */
             }
 
             /* Print-specific semester detail styling */
@@ -618,18 +542,13 @@
                 box-shadow: none;
                 padding: 15px;
                 border-radius: 8px;
-                page-break-inside: avoid; /* Keep semester details (heading + table) together */
-                margin-bottom: 15px; /* Space between different semester blocks */
-                page-break-after: auto; /* Don't force page break after each detail, let content flow */
-            }
-            .print-semester-detail:last-child {
-                page-break-after: auto; /* Ensure no extra page break after the very last semester */
+                page-break-inside: avoid; /* Keep semester details together */
+                margin-bottom: 15px;
             }
             .print-semester-detail h3 {
                 text-align: left;
                 cursor: auto;
                 text-decoration: none !important;
-                margin-bottom: 8px; /* Tighter spacing */
             }
             
             /* Watermark for print */
@@ -657,7 +576,6 @@
                 padding: 8px 10px;
                 vertical-align: top;
                 text-align: left; /* Align headers left */
-                font-weight: bold; /* Ensure headers are bold */
             }
             .course-table.print-table tbody td {
                 background: white !important;
@@ -684,8 +602,9 @@
             <h2>GPA Report</h2>
             <div id="reportMessage" class="message"></div>
             <div id="reportOutput">
-                <!-- This content will be dynamically generated by updateReport() -->
-            </div>
+                <p class="overall-gpa">0.00</p>
+                <hr>
+                </div>
             <button id="printReportBtn" onclick="window.print()">Print GPA Report</button>
         </div>
 
@@ -714,23 +633,9 @@
         </div>
     </div>
 
-    <!-- Watermark for copyright -->
     <div id="watermark">
         &copy; 2025 Renolson
     </div>
-
-    <!-- Reset Confirmation Modal -->
-    <div id="resetConfirmModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>Confirm Reset</h3>
-            <p>Are you sure you want to reset all data? This action cannot be undone.</p>
-            <div class="modal-buttons">
-                <button class="confirm-btn" id="confirmResetBtn">Yes, Reset All</button>
-                <button class="cancel-btn" id="cancelResetBtn">Cancel</button>
-            </div>
-        </div>
-    </div>
-
 
     <script>
         // Default grade point values for common scales
@@ -1002,32 +907,26 @@
             if (hasInputErrors) {
                 showMessage('reportMessage', 'Please correct highlighted errors (invalid credits or missing grades) for accurate results. ⚠️', 'error');
             } else if (totalOverallCredits === 0 && semesterGlobalIdCounter > 0) {
-                 showMessage('reportMessage', 'Add courses with valid credits and grades to calculate GPA. 📚', 'info');
+                    showMessage('reportMessage', 'Add courses with valid credits and grades to calculate GPA. 📚', 'info');
             } else if (totalOverallCredits === 0 && semesterGlobalIdCounter === 0) {
-                 showMessage('reportMessage', 'Start by adding a semester and courses to calculate your GPA! 🚀', 'info');
+                    showMessage('reportMessage', 'Start by adding a semester and courses to calculate your GPA! 🚀', 'info');
             } else {
-                 showMessage('reportMessage', 'GPA calculated successfully! 🎉', 'success');
+                    showMessage('reportMessage', 'GPA calculated successfully! 🎉', 'success');
             }
 
-            // --- Constructing Print-Specific HTML for Report ---
-            let fullPrintReportHtml = ``;
+            // Display overall GPA (always present)
+            const overallGPA = totalOverallCredits > 0 ? (totalOverallPoints / totalOverallCredits).toFixed(2) : '0.00';
+            reportOutputDiv.innerHTML += `<p class="overall-gpa">${overallGPA}</p>`;
+            reportOutputDiv.innerHTML += `<hr>`;
 
-            // Main heading for the entire printout (only appears once)
-            fullPrintReportHtml += `<h1>Smart GPA Calculator</h1>`;
 
-            // GPA Report summary section
-            fullPrintReportHtml += `
-                <div class="report-summary-print">
-                    <h2>GPA Report</h2>
-                    <p class="overall-gpa">${totalOverallCredits > 0 ? (totalOverallPoints / totalOverallCredits).toFixed(2) : '0.00'}</p>
-                    <hr class="summary-hr">
-            `;
+            // Display semester GPAs
             semesterReports.forEach(semReport => {
-                fullPrintReportHtml += `<p class="semester-gpa-item"><strong>${semReport.name} GPA:</strong> ${semReport.gpa}</p>`;
+                reportOutputDiv.innerHTML += `<p class="semester-gpa-item"><strong>${semReport.name} GPA:</strong> ${semReport.gpa}</p>`;
             });
-            fullPrintReportHtml += `</div>`; // Close report-summary-print
+            reportOutputDiv.innerHTML += `<hr>`; // Another separator before detailed tables
 
-            // Detailed tables for each semester
+            // Display detailed tables for each semester
             semesterReports.forEach(semReport => {
                 let tableHtml = `
                     <div class="print-semester-detail">
@@ -1053,11 +952,8 @@
                             </tbody>
                         </table>
                     </div>`;
-                fullPrintReportHtml += tableHtml;
+                reportOutputDiv.innerHTML += tableHtml;
             });
-
-            // Update the reportOutputDiv with the generated HTML
-            reportOutputDiv.innerHTML = fullPrintReportHtml;
 
 
             saveCalculatorData(); // Auto-save after every report update
@@ -1151,8 +1047,8 @@
                 });
                 // After loading all semesters, ensure semesterGlobalIdCounter is correctly set to the highest ID
                 semesterGlobalIdCounter = document.querySelectorAll('.semester').length > 0
-                                            ? Math.max(...Array.from(document.querySelectorAll('.semester')).map(s => parseInt(s.id.split('-')[1])))
-                                            : 0;
+                                                 ? Math.max(...Array.from(document.querySelectorAll('.semester')).map(s => parseInt(s.id.split('-')[1])))
+                                                 : 0;
 
             } else {
                 addSemester(); // If no saved data, add the first semester fresh
@@ -1162,36 +1058,6 @@
         // --- Global Reset Function ---
         // This function combines resetting grade scale, all semester data, and the UI
         function resetCalculatorFull() {
-            showResetConfirmModal(); // Show confirmation modal instead of direct reset
-        }
-
-        // Assign the reset function to the button
-        document.getElementById('resetAllDataBtn').addEventListener('click', resetCalculatorFull);
-
-        // --- Reset Confirmation Modal Logic ---
-        const resetConfirmModal = document.getElementById('resetConfirmModal');
-        const confirmResetBtn = document.getElementById('confirmResetBtn');
-        const cancelResetBtn = document.getElementById('cancelResetBtn');
-
-        function showResetConfirmModal() {
-            resetConfirmModal.classList.add('show');
-        }
-
-        function hideResetConfirmModal() {
-            resetConfirmModal.classList.remove('show');
-        }
-
-        confirmResetBtn.addEventListener('click', () => {
-            hideResetConfirmModal();
-            performFullReset(); // Call the actual reset logic
-        });
-
-        cancelResetBtn.addEventListener('click', () => {
-            hideResetConfirmModal();
-        });
-
-        // Actual reset logic, separated from the button click handler
-        function performFullReset() {
             gradeScale = { ...defaultGrades }; // Reset grade scale in memory
             localStorage.removeItem('smartGpaGradeScale'); // Clear saved grade scale
             renderGradeScale(); // Update grade scale UI
@@ -1208,6 +1074,9 @@
             updateReport(); // Update report after full reset
             showMessage('reportMessage', 'Calculator fully reset to default. All data cleared. 🔄', 'info');
         }
+
+        // Assign the reset function to the button
+        document.getElementById('resetAllDataBtn').addEventListener('click', resetCalculatorFull);
 
 
         // Initial setup on page load
