@@ -1,254 +1,755 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Smart GPA Calculator</title>
-  <style>
-    :root {
-      --primary: #1e3a8a;
-      --accent: #38bdf8;
-      --background: #f9fafb;
-      --card-bg: #ffffff;
-      --text-color: #1f2937;
-      --border-color: #d1d5db;
-      --hover-color: #eff6ff;
-    }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--background);
-      margin: 0;
-      padding: 20px;
-      color: var(--text-color);
-    }
-    h1, h2, h3 {
-      text-align: center;
-      color: var(--primary);
-      margin-bottom: 12px;
-    }
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      background: var(--card-bg);
-      padding: 35px;
-      border-radius: 14px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 15px 0;
-    }
-    th {
-      background-color: var(--primary);
-      color: white;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-    th, td {
-      border: 1px solid var(--border-color);
-      padding: 12px;
-      text-align: center;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 10px 5px;
-      background-color: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s;
-    }
-    button:hover {
-      background-color: #0ea5e9;
-      transform: scale(1.02);
-    }
-    input, select {
-      padding: 8px;
-      width: 95%;
-      border: 1px solid var(--border-color);
-      border-radius: 4px;
-      background-color: #fff;
-    }
-    .semester {
-      border: 1px solid var(--border-color);
-      margin-bottom: 25px;
-      padding: 18px;
-      border-radius: 10px;
-      background-color: var(--hover-color);
-    }
-    .grade-scale input[type="number"] {
-      width: 80px;
-      text-align: center;
-    }
-    .course-table th, .course-table td {
-      background: #ffffff;
-    }
-    .report p {
-      font-size: 1.1rem;
-      margin: 10px 0;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Smart GPA Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for a clean, cohesive theme */
+        :root {
+            --primary-dark: #1a2c5b; /* Darker blue for main headings */
+            --primary-light: #2c448f; /* Slightly lighter primary for accents */
+            --secondary-accent: #00bcd4; /* Cyan/Teal for highlights */
+            --light-bg: #eef7fc; /* Very light blue for subtle background */
+            --card-bg: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #4a5568;
+            --border-light: #e2e8f0;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --shadow-medium: rgba(0, 0, 0, 0.08);
+            --gradient-start: #3f51b5; /* Deeper blue for buttons */
+            --gradient-end: #673ab7;   /* Purple for buttons */
+            --gradient-hover-start: #303f9f;
+            --gradient-hover-end: #512da8;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+        }
 
-    @media print {
-      button {
-        display: none;
-      }
-      body {
-        background: white;
-        color: black;
-        font-size: 12pt;
-      }
-      .container {
-        box-shadow: none;
-        padding: 0;
-      }
-      .report {
-        page-break-inside: avoid;
-      }
-      .report h2, .report p {
-        text-align: left;
-        color: black;
-      }
-      .semester {
-        background: white;
-        border: none;
-        page-break-inside: avoid;
-      }
-      .grade-scale {
-        display: none;
-      }
-    }
-  </style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--light-bg);
+            margin: 0;
+            padding: 30px;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        /* Custom Scrollbar for a modern look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--light-bg);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            margin: auto;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px var(--shadow-medium);
+            border: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            gap: 40px; /* Increased space between sections */
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.5rem; /* Larger, more impactful */
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+            margin-bottom: 25px; /* More space below H1 */
+            letter-spacing: -0.03em; /* Slightly tighter for impact */
+        }
+
+        h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            text-align: center;
+            margin-bottom: 25px; /* More space below H2 */
+            position: relative;
+            padding-bottom: 10px;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px; /* Underline effect */
+            height: 4px;
+            background-color: var(--secondary-accent);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate; /* Allows for rounded corners on cells */
+            border-spacing: 0;
+            margin: 20px 0;
+            overflow: hidden; /* Ensures border-radius is applied */
+            border-radius: 12px;
+        }
+
+        th {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary-light));
+            color: white;
+            text-transform: uppercase;
+            font-weight: 600;
+            padding: 15px 10px;
+            letter-spacing: 0.05em;
+            font-size: 0.95rem;
+        }
+
+        td {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-light);
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 0.95rem;
+            vertical-align: middle;
+        }
+
+        /* Specific border-radius for table corners */
+        table thead tr:first-child th:first-child { border-top-left-radius: 12px; }
+        table thead tr:first-child th:last-child { border-top-right-radius: 12px; }
+        table tbody tr:last-child td:first-child { border-bottom-left-radius: 12px; }
+        table tbody tr:last-child td:last-child { border-bottom-right-radius: 12px; }
+
+
+        button {
+            padding: 12px 25px;
+            margin: 8px; /* Adjusted margin */
+            background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            border: none;
+            border-radius: 8px; /* Slightly more rounded */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px var(--shadow-light);
+            display: inline-flex; /* For icon alignment */
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, var(--gradient-hover-start), var(--gradient-hover-end));
+            transform: translateY(-2px); /* Subtle lift */
+            box-shadow: 0 6px 15px var(--shadow-medium);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px var(--shadow-light);
+        }
+
+        input, select {
+            padding: 10px; /* Increased padding */
+            width: calc(100% - 20px); /* Account for padding */
+            border: 1px solid var(--border-light);
+            border-radius: 8px; /* More rounded inputs */
+            background-color: #fff;
+            box-shadow: inset 0 1px 3px var(--shadow-light);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--secondary-accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 188, 212, 0.2); /* Focus ring */
+        }
+        
+        input.error, select.error {
+            border-color: var(--error-color);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+        }
+
+        .semester {
+            border: 1px solid var(--border-light);
+            margin-bottom: 25px;
+            padding: 25px; /* More padding */
+            border-radius: 15px; /* Larger radius */
+            background-color: var(--card-bg);
+            box-shadow: 0 8px 20px var(--shadow-light);
+            position: relative;
+        }
+        .semester h3 {
+            margin-top: -5px; /* Adjust spacing for semester heading */
+            margin-bottom: 15px;
+        }
+        .semester-controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        .grade-scale {
+            background-color: var(--light-bg); /* Distinct background for config */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 8px var(--shadow-light);
+        }
+        .grade-scale input[type="number"] {
+            width: 90px; /* Wider for better touch target */
+        }
+        .grade-scale table {
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .grade-scale button {
+            background: linear-gradient(45deg, #f44336, #e91e63); /* Red gradient for reset */
+            box-shadow: 0 4px 10px rgba(244, 67, 54, 0.2);
+        }
+        .grade-scale button:hover {
+            background: linear-gradient(45deg, #d32f2f, #c2185b);
+            box-shadow: 0 6px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .report {
+            background-color: #e0f2f7; /* Light blue for report */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px var(--shadow-light);
+            text-align: center; /* Center main GPA display */
+        }
+        .report h2 {
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+        }
+        .overall-gpa {
+            font-family: 'Poppins', sans-serif;
+            font-size: 4rem; /* Very large GPA display */
+            font-weight: 700;
+            color: var(--gradient-end); /* Accent color */
+            margin: 20px 0;
+            text-shadow: 2px 2px 5px var(--shadow-light);
+        }
+        .semester-gpa-item {
+            font-size: 1.15rem;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .semester-gpa-item strong {
+            color: var(--primary-light);
+        }
+        .report hr {
+            border: none;
+            border-top: 1px dashed var(--border-light);
+            margin: 25px auto;
+            width: 70%;
+        }
+        .message {
+            padding: 12px 18px;
+            margin-top: 15px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+            opacity: 0; /* Hidden by default */
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .message.success { background-color: #d1fae5; color: var(--success-color); border: 1px solid #a7f3d0; }
+        .message.error { background-color: #fee2e2; color: var(--error-color); border: 1px solid #fca5a5; }
+        .message.info { background-color: #dbeafe; color: #3b82f6; border: 1px solid #93c5fd; }
+        .message.warning { background-color: #fffbeb; color: var(--warning-color); border: 1px solid #fcd34d; }
+
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            .container {
+                padding: 25px;
+                gap: 30px;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+            h2 {
+                font-size: 1.7rem;
+            }
+            h3 {
+                font-size: 1.3rem;
+            }
+            button {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            th, td {
+                padding: 10px 8px;
+                font-size: 0.85rem;
+            }
+            .semester-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            .grade-scale input[type="number"] {
+                width: 70px;
+            }
+            .overall-gpa {
+                font-size: 3rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .report button {
+                width: 100%;
+            }
+            .grade-scale table {
+                display: block;
+                overflow-x: auto; /* Make table scrollable */
+                white-space: nowrap;
+                -webkit-overflow-scrolling: touch;
+            }
+            .grade-scale table thead, .grade-scale table tbody, .grade-scale table tr, .grade-scale table th, .grade-scale table td {
+                display: block; /* Stack table elements */
+            }
+            .grade-scale table tr {
+                margin-bottom: 10px;
+                border: 1px solid var(--border-light);
+                border-radius: 8px;
+            }
+            .grade-scale table td {
+                border: none;
+                text-align: left;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 8px 15px;
+            }
+            .grade-scale table td:first-child {
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+            }
+            .grade-scale table td:last-child {
+                border-bottom-left-radius: 8px;
+                border-bottom-right-radius: 8px;
+            }
+             .grade-scale table th {
+                display: none; /* Hide header for stacked view */
+            }
+            .grade-scale input[type="number"] {
+                width: 100px; /* Allow more space for input */
+            }
+            .course-table thead, .course-table tbody, .course-table tr, .course-table th, .course-table td {
+                display: block;
+                width: 100%;
+            }
+            .course-table tr {
+                margin-bottom: 15px;
+                border: 1px solid var(--border-light);
+                border-radius: 10px;
+            }
+            .course-table td {
+                text-align: left;
+                padding: 10px 15px;
+                border: none;
+            }
+            .course-table td:nth-child(even) {
+                background-color: #f8fafd; /* Slight stripe for readability */
+            }
+            .course-table td:first-child { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+            .course-table td:last-child { border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; }
+            .course-table th { display: none; } /* Hide headers for stacked view */
+            .course-table td:before {
+                content: attr(data-label); /* Show label for stacked view */
+                font-weight: 600;
+                margin-right: 10px;
+                color: var(--primary-light);
+            }
+        }
+
+
+        /* Print specific styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+                padding: 0;
+                margin: 0;
+                font-size: 11pt;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+                border: none;
+                border-radius: 0;
+                gap: 20px;
+            }
+            h1, h2, h3 {
+                color: #000 !important;
+                background: none !important;
+                -webkit-text-fill-color: initial !important;
+                text-shadow: none;
+                text-align: left; /* Align headings left for print */
+                margin-bottom: 8px;
+            }
+            h1 { font-size: 2rem; margin-bottom: 15px; }
+            h2 { font-size: 1.5rem; margin-bottom: 10px; }
+            h3 { font-size: 1.2rem; margin-bottom: 10px; }
+            h2::after { display: none; } /* Hide underline */
+
+            button, .grade-scale, .message {
+                display: none !important; /* Hide non-essential elements */
+            }
+            .report {
+                background: none;
+                box-shadow: none;
+                padding: 0;
+                text-align: left;
+                page-break-inside: avoid;
+            }
+            .overall-gpa {
+                font-size: 3rem;
+                color: var(--primary-dark) !important;
+                text-align: left;
+                margin: 10px 0;
+            }
+            .report hr {
+                border-top: 1px solid #ccc;
+                width: 100%;
+                margin: 15px 0;
+            }
+            .semester {
+                background: #f0f8ff; /* Light background for semester blocks */
+                border: 1px solid #cce7ff;
+                box-shadow: none;
+                padding: 15px;
+                border-radius: 8px;
+                page-break-inside: avoid;
+                margin-bottom: 15px;
+            }
+            .semester h3 {
+                text-align: left;
+            }
+            table {
+                border-radius: 0;
+                margin: 10px 0;
+            }
+            th {
+                background: #e0f2f7 !important;
+                color: #000 !important;
+                border-bottom: 1px solid #aed6f1 !important;
+                border-left: 1px solid #e0e0e0 !important;
+                border-right: 1px solid #e0e0e0 !important;
+            }
+            td {
+                background: white !important;
+                border-bottom: 1px dashed #e0e0e0 !important;
+                border-left: 1px solid #e0e0e0 !important;
+                border-right: 1px solid #e0e0e0 !important;
+            }
+            table thead tr:first-child th:first-child { border-top-left-radius: 0; }
+            table thead tr:first-child th:last-child { border-top-right-radius: 0; }
+            table tbody tr:last-child td:first-child { border-bottom-left-radius: 0; }
+            table tbody tr:last-child td:last-child { border-bottom-right-radius: 0; }
+            .course-table td:before { display: none; } /* Hide labels for print */
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Smart GPA Calculator</h1>
+    <div class="container">
+        <h1>Smart GPA Calculator</h1>
 
-    <div class="report">
-      <h2>GPA Report</h2>
-      <div id="reportOutput"></div>
-      <button onclick="window.print()">Print GPA Report</button>
+        <div class="report">
+            <h2>GPA Report</h2>
+            <div id="reportMessage" class="message"></div>
+            <div id="reportOutput">
+                <p class="overall-gpa">0.00</p>
+                <hr>
+                </div>
+            <button onclick="window.print()">Print GPA Report</button>
+        </div>
+
+        <div class="semesters">
+            <h2>Semesters</h2>
+            <div class="semester-controls">
+                <button onclick="addSemester()">Add New Semester</button>
+            </div>
+            <div id="semesterContainer"></div>
+        </div>
+
+        <div class="grade-scale">
+            <h2>Customize Grade Scale</h2>
+            <div id="gradeScaleMessage" class="message"></div>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <button onclick="resetGradeScale()">Reset to Default Grades</button>
+                <button onclick="saveGradeScale()">Save Custom Grades</button>
+            </div>
+            <table id="gradeScaleTable">
+                <thead>
+                    <tr><th>Grade</th><th>GPA Value</th></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 
-    <div class="semesters">
-      <h2>Semesters</h2>
-      <button onclick="addSemester()">Add Semester</button>
-      <div id="semesterContainer"></div>
-    </div>
+    <script>
+        // Default grade point values for common scales
+        const defaultGrades = {
+            'A+': 4.0, 'A': 4.0, 'A-': 3.7,
+            'B+': 3.3, 'B': 3.0, 'B-': 2.7,
+            'C+': 2.3, 'C': 2.0, 'C-': 1.7,
+            'D+': 1.3, 'D': 1.0, 'D-': 0.7,
+            'F': 0.0
+        };
 
-    <div class="grade-scale">
-      <h2>Customize Grade Scale</h2>
-      <button onclick="resetGradeScale()">Reset to Default</button>
-      <table id="gradeScaleTable">
-        <thead>
-          <tr><th>Grade</th><th>GPA Value</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
+        // Load grade scale from local storage or use defaults
+        let gradeScale = JSON.parse(localStorage.getItem('smartGpaGradeScale')) || { ...defaultGrades };
 
-  <script>
-    const defaultGrades = {
-      'A+': 4.0, 'A': 4.0, 'A-': 3.7,
-      'B+': 3.3, 'B': 3.0, 'B-': 2.7,
-      'C+': 2.3, 'C': 2.0, 'C-': 1.7,
-      'D+': 1.3, 'D': 1.0, 'D-': 0.7,
-      'F': 0.0
-    };
-    let gradeScale = JSON.parse(localStorage.getItem('gradeScale')) || { ...defaultGrades };
+        // Helper function to display messages
+        function showMessage(elementId, msg, type) {
+            const el = document.getElementById(elementId);
+            el.textContent = msg;
+            el.className = `message show ${type}`;
+            setTimeout(() => {
+                el.classList.remove('show');
+            }, 5000);
+        }
 
-    function updateLocalGradeScale() {
-      localStorage.setItem('gradeScale', JSON.stringify(gradeScale));
-      renderGradeScale();
-    }
+        // Updates local storage with current grade scale and re-renders
+        function saveGradeScale() {
+            localStorage.setItem('smartGpaGradeScale', JSON.stringify(gradeScale));
+            renderGradeScale(); // Re-render to ensure inputs reflect saved state
+            updateReport(); // Recalculate GPA with new scale
+            showMessage('gradeScaleMessage', 'Grade scale saved successfully! ✨', 'success');
+        }
 
-    function resetGradeScale() {
-      gradeScale = { ...defaultGrades };
-      updateLocalGradeScale();
-    }
+        // Resets grade scale to default values and updates local storage
+        function resetGradeScale() {
+            gradeScale = { ...defaultGrades };
+            localStorage.removeItem('smartGpaGradeScale'); // Clear from local storage
+            renderGradeScale();
+            updateReport(); // Recalculate GPA with default scale
+            showMessage('gradeScaleMessage', 'Grade scale reset to default. 🔄', 'info');
+        }
 
-    function renderGradeScale() {
-      const tbody = document.querySelector('#gradeScaleTable tbody');
-      tbody.innerHTML = '';
-      for (let grade in gradeScale) {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${grade}</td>
-          <td><input type="number" step="0.1" value="${gradeScale[grade]}" onchange="gradeScale['${grade}']=parseFloat(this.value); updateLocalGradeScale()"></td>`;
-        tbody.appendChild(row);
-      }
-    }
+        // Renders the customizable grade scale table
+        function renderGradeScale() {
+            const tbody = document.querySelector('#gradeScaleTable tbody');
+            tbody.innerHTML = '';
+            // Ensure grades are rendered in a consistent order (e.g., A+, A, A-...)
+            const orderedGrades = Object.keys(defaultGrades).sort((a, b) => {
+                const order = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
+                return order.indexOf(a) - order.indexOf(b);
+            });
 
-    let semesterId = 0;
+            orderedGrades.forEach(grade => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${grade}</td>
+                    <td><input type="number" step="0.1" min="0" max="5.0" value="${gradeScale[grade]}" 
+                               onchange="gradeScale['${grade}']=parseFloat(this.value); updateReport();"></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
 
-    function addSemester() {
-      const container = document.getElementById('semesterContainer');
-      const semesterDiv = document.createElement('div');
-      semesterDiv.className = 'semester';
-      semesterDiv.id = `semester-${semesterId}`;
-      semesterDiv.innerHTML = `
-        <h3>Semester ${semesterId + 1}</h3>
-        <button onclick="addCourse(${semesterId})">Add Course</button>
-        <button onclick="removeSemester(${semesterId})">Remove Semester</button>
-        <table class="course-table">
-          <thead><tr><th>Course</th><th>Grade</th><th>Credits</th><th>Action</th></tr></thead>
-          <tbody id="courses-${semesterId}"></tbody>
-        </table>
-      `;
-      container.appendChild(semesterDiv);
-      addCourse(semesterId);
-      semesterId++;
-    }
+        let semesterCount = 0; // Tracks the number of semesters added
 
-    function removeSemester(id) {
-      const sem = document.getElementById(`semester-${id}`);
-      if (sem) {
-        sem.remove();
-        updateReport();
-      }
-    }
+        // Adds a new semester block
+        function addSemester() {
+            semesterCount++;
+            const container = document.getElementById('semesterContainer');
+            const semesterDiv = document.createElement('div');
+            semesterDiv.className = 'semester';
+            semesterDiv.id = `semester-${semesterCount}`; // Use semesterCount for unique ID
+            semesterDiv.innerHTML = `
+                <h3>Semester ${semesterCount}</h3>
+                <div class="semester-controls">
+                    <button onclick="addCourse(${semesterCount})">Add Course</button>
+                    <button onclick="removeSemester(${semesterCount})">Remove Semester</button>
+                </div>
+                <table class="course-table">
+                    <thead><tr><th>Course</th><th>Grade</th><th>Credits</th><th>Action</th></tr></thead>
+                    <tbody id="courses-${semesterCount}"></tbody>
+                </table>
+            `;
+            container.appendChild(semesterDiv);
+            addCourse(semesterCount); // Add first course to the new semester
+            updateReport();
+            showMessage('reportMessage', `Semester ${semesterCount} added!`, 'info');
+        }
 
-    function addCourse(semId) {
-      const courseRow = document.createElement('tr');
-      const gradeOptions = Object.keys(gradeScale).map(g => `<option value="${g}">${g}</option>`).join('');
-      courseRow.innerHTML = `
-        <td><input placeholder="Course Name"></td>
-        <td><select>${gradeOptions}</select></td>
-        <td><input type="number" step="0.1" min="0"></td>
-        <td><button onclick="this.closest('tr').remove(); updateReport()">Remove</button></td>
-      `;
-      document.getElementById(`courses-${semId}`).appendChild(courseRow);
-      courseRow.querySelectorAll('input,select').forEach(el => el.addEventListener('change', updateReport));
-    }
+        // Removes a specific semester block
+        function removeSemester(id) {
+            const semesters = document.querySelectorAll('.semester');
+            if (semesters.length <= 1) {
+                showMessage('reportMessage', 'You must have at least one semester. ⚠️', 'warning');
+                return;
+            }
+            const sem = document.getElementById(`semester-${id}`);
+            if (sem) {
+                sem.remove();
+                // Re-index semester headings for display after removal
+                document.querySelectorAll('.semester').forEach((s, index) => {
+                    s.id = `semester-${index + 1}`; // Update ID
+                    s.querySelector('h3').textContent = `Semester ${index + 1}`; // Update display
+                    // Update the `semId` in addCourse and removeSemester calls
+                    const addCourseBtn = s.querySelector('button[onclick^="addCourse"]');
+                    const removeSemesterBtn = s.querySelector('button[onclick^="removeSemester"]');
+                    const courseTbody = s.querySelector('tbody[id^="courses-"]');
 
-    function updateReport() {
-      let totalPoints = 0, totalCredits = 0;
-      const report = document.getElementById('reportOutput');
-      report.innerHTML = '';
-      document.querySelectorAll('.semester').forEach((sem, i) => {
-        let semPoints = 0, semCredits = 0;
-        const rows = sem.querySelectorAll('tbody tr');
-        rows.forEach(row => {
-          const grade = row.children[1].querySelector('select').value;
-          const credits = parseFloat(row.children[2].querySelector('input').value);
-          if (!isNaN(credits) && gradeScale[grade] != null) {
-            semCredits += credits;
-            semPoints += credits * gradeScale[grade];
-          }
+                    if (addCourseBtn) addCourseBtn.setAttribute('onclick', `addCourse(${index + 1})`);
+                    if (removeSemesterBtn) removeSemesterBtn.setAttribute('onclick', `removeSemester(${index + 1})`);
+                    if (courseTbody) courseTbody.id = `courses-${index + 1}`;
+                });
+                semesterCount = semesters.length - 1; // Decrement global count
+                updateReport();
+                showMessage('reportMessage', `Semester removed! 👋`, 'info');
+            }
+        }
+
+        // Adds a new course row to a specified semester
+        function addCourse(semId) {
+            const courseTbody = document.getElementById(`courses-${semId}`);
+            if (!courseTbody) return; // Guard clause if semester doesn't exist
+
+            const courseRow = document.createElement('tr');
+            // Ensure grade options are created using the current gradeScale values
+            const gradeOptions = Object.keys(gradeScale).sort((a, b) => {
+                const order = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
+                return order.indexOf(a) - order.indexOf(b);
+            }).map(g => `<option value="${g}">${g}</option>`).join('');
+
+            courseRow.innerHTML = `
+                <td data-label="Course"><input type="text" placeholder="e.g., Calculus I" class="course-name"></td>
+                <td data-label="Grade"><select class="grade-select">${gradeOptions}</select></td>
+                <td data-label="Credits"><input type="number" step="0.5" min="0" class="course-credits"></td>
+                <td data-label="Action"><button onclick="this.closest('tr').remove(); updateReport()">Remove</button></td>
+            `;
+            courseTbody.appendChild(courseRow);
+            courseRow.querySelectorAll('input, select').forEach(el => el.addEventListener('input', updateReport)); // Use 'input' for live updates
+            updateReport(); // Update report after adding a new course
+        }
+
+        // Calculates and displays the GPA report
+        function updateReport() {
+            let totalOverallPoints = 0;
+            let totalOverallCredits = 0;
+            const semesterReports = [];
+            let hasInputErrors = false;
+
+            document.querySelectorAll('.semester').forEach((sem, semIndex) => {
+                let semesterPoints = 0;
+                let semesterCredits = 0;
+                const rows = sem.querySelectorAll('tbody tr');
+
+                rows.forEach(row => {
+                    const gradeSelect = row.children[1].querySelector('select');
+                    const creditsInput = row.children[2].querySelector('input');
+
+                    // Reset error highlighting
+                    gradeSelect.classList.remove('error');
+                    creditsInput.classList.remove('error');
+
+                    const grade = gradeSelect.value;
+                    const credits = parseFloat(creditsInput.value);
+
+                    const gradeValue = gradeScale[grade];
+
+                    if (isNaN(credits) || credits <= 0 || !grade || gradeValue == null) {
+                        hasInputErrors = true;
+                        if (isNaN(credits) || credits <= 0) {
+                            creditsInput.classList.add('error');
+                        }
+                        if (!grade || gradeValue == null) {
+                            gradeSelect.classList.add('error');
+                        }
+                    } else {
+                        semesterCredits += credits;
+                        semesterPoints += credits * gradeValue;
+                    }
+                });
+
+                const semesterGPA = semesterCredits > 0 ? (semesterPoints / semesterCredits).toFixed(2) : '0.00';
+                semesterReports.push(`<p class="semester-gpa-item"><strong>Semester ${semIndex + 1} GPA:</strong> ${semesterGPA}</p>`);
+
+                totalOverallCredits += semesterCredits;
+                totalOverallPoints += semesterPoints;
+            });
+
+            const reportOutputDiv = document.getElementById('reportOutput');
+            reportOutputDiv.innerHTML = ''; // Clear previous content
+
+            if (hasInputErrors) {
+                showMessage('reportMessage', 'Please correct highlighted errors (invalid credits or missing grades) for accurate results. ⚠️', 'error');
+            } else if (totalOverallCredits === 0 && semesterCount > 0) {
+                 showMessage('reportMessage', 'Add courses with valid credits and grades to calculate GPA. 📚', 'info');
+            } else if (totalOverallCredits === 0 && semesterCount === 0) {
+                 showMessage('reportMessage', 'Start by adding a semester and courses to calculate your GPA! 🚀', 'info');
+            } else {
+                 showMessage('reportMessage', 'GPA calculated successfully! 🎉', 'success');
+            }
+
+            // Always display semester GPAs and overall GPA, even with errors, for transparency
+            semesterReports.forEach(reportHtml => {
+                reportOutputDiv.innerHTML += reportHtml;
+            });
+            reportOutputDiv.innerHTML += `<hr><p class="overall-gpa">${totalOverallCredits > 0 ? (totalOverallPoints / totalOverallCredits).toFixed(2) : '0.00'}</p>`;
+        }
+
+
+        // Initial setup on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGradeScale(); // Render grade scale on load
+            addSemester(); // Add the first semester automatically
+            updateReport(); // Calculate initial GPA (will be 0.00)
         });
-        const semGPA = semCredits ? (semPoints / semCredits).toFixed(2) : '0.00';
-        totalCredits += semCredits;
-        totalPoints += semPoints;
-        report.innerHTML += `<p><strong>Semester ${i + 1} GPA:</strong> ${semGPA}</p>`;
-      });
-      const overallGPA = totalCredits ? (totalPoints / totalCredits).toFixed(2) : '0.00';
-      report.innerHTML += `<hr><p><strong>Cumulative GPA:</strong> ${overallGPA}</p>`;
-    }
-
-    window.addEventListener('beforeprint', updateReport);
-    renderGradeScale();
-  </script>
+    </script>
 </body>
 </html>
