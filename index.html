@@ -1,449 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced GPA Calculator</title>
-    <!-- Tailwind CSS CDN for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Custom styles for the Inter font and overall layout */
-        body {
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; /* Align to top for better scrolling */
-            min-height: 100vh;
-            background-color: #f3f4f6; /* Light gray background */
-            padding: 2rem; /* Add generous padding for smaller screens */
-        }
-        .container {
-            background-color: #ffffff;
-            padding: 2.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* More pronounced shadow */
-            max-width: 95vw;
-            width: 950px; /* Slightly wider for overall appeal */
-            display: flex;
-            flex-direction: column;
-            gap: 2.5rem; /* Increased space between major sections */
-            margin: 1rem;
-        }
-        input[type="text"], input[type="number"], select {
-            @apply w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
-        }
-        button {
-            @apply px-5 py-2.5 rounded-lg font-semibold transition-all duration-200 ease-in-out shadow-md; /* Slightly larger padding and border-radius */
-        }
-        button:hover:not(:disabled) {
-            @apply transform -translate-y-1 shadow-lg; /* More pronounced lift on hover */
-        }
-        button:disabled {
-            @apply opacity-60 cursor-not-allowed;
-        }
-        .semester-header {
-            @apply flex justify-between items-center bg-blue-100 p-3 rounded-t-lg border-b border-blue-200 text-lg font-medium text-blue-800; /* Cohesive blue tones */
-        }
-        .course-row {
-            @apply grid grid-cols-1 md:grid-cols-4 gap-3 py-2 border-b border-gray-100 items-center;
-        }
-        .course-row:last-child {
-            @apply border-b-0; /* No border for the last course in a semester */
-        }
-        .grade-config-row {
-            @apply flex flex-col sm:flex-row items-center gap-2 mb-2;
-        }
-        .message-box {
-            @apply p-3 rounded-md mt-4 text-sm hidden; /* Hidden by default */
-        }
-        .message-box.error {
-            @apply bg-red-100 text-red-700 border border-red-400;
-        }
-        .message-box.success {
-            @apply bg-green-100 text-green-700 border border-green-400;
-        }
-        .message-box.info {
-            @apply bg-blue-100 text-blue-700 border border-blue-400;
-        }
-        /* Specific styling for the main calculate button */
-        #calculateGPA {
-            @apply bg-gradient-to-r from-blue-600 to-indigo-700 text-white !py-3 !px-8 text-lg rounded-xl shadow-xl;
-        }
-        #calculateGPA:hover {
-            @apply from-blue-700 to-indigo-800 transform scale-105;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart GPA Calculator</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --accent: #38bdf8;
+      --background: #f9fafb;
+      --card-bg: #ffffff;
+      --text-color: #1f2937;
+      --border-color: #d1d5db;
+      --hover-color: #eff6ff;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background);
+      margin: 0;
+      padding: 20px;
+      color: var(--text-color);
+    }
+    h1, h2, h3 {
+      text-align: center;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      background: var(--card-bg);
+      padding: 35px;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+    }
+    th {
+      background-color: var(--primary);
+      color: white;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 12px;
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s;
+    }
+    button:hover {
+      background-color: #0ea5e9;
+      transform: scale(1.02);
+    }
+    input, select {
+      padding: 8px;
+      width: 95%;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: #fff;
+    }
+    .semester {
+      border: 1px solid var(--border-color);
+      margin-bottom: 25px;
+      padding: 18px;
+      border-radius: 10px;
+      background-color: var(--hover-color);
+    }
+    .grade-scale input[type="number"] {
+      width: 80px;
+      text-align: center;
+    }
+    .course-table th, .course-table td {
+      background: #ffffff;
+    }
+    .report p {
+      font-size: 1.1rem;
+      margin: 10px 0;
+    }
+
+    @media print {
+      button {
+        display: none;
+      }
+      body {
+        background: white;
+        color: black;
+        font-size: 12pt;
+      }
+      .container {
+        box-shadow: none;
+        padding: 0;
+      }
+      .report {
+        page-break-inside: avoid;
+      }
+      .report h2, .report p {
+        text-align: left;
+        color: black;
+      }
+      .semester {
+        background: white;
+        border: none;
+        page-break-inside: avoid;
+      }
+      .grade-scale {
+        display: none;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="text-4xl font-extrabold text-center text-gray-800 mb-6">Your Academic GPA Hub</h1>
+  <div class="container">
+    <h1>Smart GPA Calculator</h1>
 
-        <!-- Calculation and Reset Section (Moved to Top) -->
-        <div class="flex flex-col sm:flex-row justify-center items-center gap-4 bg-gray-50 p-6 rounded-lg shadow-inner border border-gray-100">
-            <button id="calculateGPA" class="w-full sm:w-auto">Calculate Cumulative GPA</button>
-            <button id="resetCalculator" class="bg-red-500 text-white hover:bg-red-600 w-full sm:w-auto">Reset All Data</button>
-        </div>
-
-        <!-- Results Display (Moved up, just below calculation buttons) -->
-        <div class="bg-blue-50 p-6 rounded-lg text-center shadow-lg border border-blue-100">
-            <h2 class="text-2xl font-bold text-blue-800 mb-3">Calculated GPA:</h2>
-            <div id="calculatedGPA" class="text-6xl font-extrabold text-blue-700 drop-shadow-lg">0.00</div>
-            <div id="resultMessageBox" class="message-box"></div>
-        </div>
-
-        <!-- Grade Point Configuration Section -->
-        <div class="bg-purple-50 p-6 rounded-lg shadow-inner border border-purple-100">
-            <h2 class="text-xl font-semibold text-purple-800 mb-4">Customize Grade Point Values</h2>
-            <p class="text-sm text-purple-700 mb-4">Adjust the point value for each letter grade. These will be saved to your browser.</p>
-            <div id="gradePointsConfig" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-4">
-                <!-- Grade point inputs will be dynamically added here by JavaScript -->
-            </div>
-            <button id="saveGradePoints" class="bg-indigo-600 text-white hover:bg-indigo-700">Save Custom Points</button>
-            <div id="configMessageBox" class="message-box"></div>
-        </div>
-
-        <!-- Semesters Input Section -->
-        <div class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">Enter Your Course Information by Semester</h2>
-            <div id="semestersContainer" class="space-y-6">
-                <!-- Semester blocks will be added here -->
-            </div>
-            <div class="flex justify-center mt-6 gap-4">
-                <button id="addSemesterBtn" class="bg-green-600 text-white hover:bg-green-700">Add New Semester</button>
-            </div>
-        </div>
-
+    <div class="report">
+      <h2>GPA Report</h2>
+      <div id="reportOutput"></div>
+      <button onclick="window.print()">Print GPA Report</button>
     </div>
 
-    <script>
-        // --- DOM Elements ---
-        const gradePointsConfigDiv = document.getElementById('gradePointsConfig');
-        const saveGradePointsBtn = document.getElementById('saveGradePoints');
-        const configMessageBox = document.getElementById('configMessageBox');
-        const semestersContainer = document.getElementById('semestersContainer');
-        const addSemesterBtn = document.getElementById('addSemesterBtn');
-        const calculateGPABtn = document.getElementById('calculateGPA');
-        const resetCalculatorBtn = document.getElementById('resetCalculator');
-        const calculatedGPADisplay = document.getElementById('calculatedGPA');
-        const resultMessageBox = document.getElementById('resultMessageBox');
+    <div class="semesters">
+      <h2>Semesters</h2>
+      <button onclick="addSemester()">Add Semester</button>
+      <div id="semesterContainer"></div>
+    </div>
 
-        // --- Configuration Defaults ---
-        const defaultGradePoints = {
-            'A+': 4.0, 'A': 4.0, 'A-': 3.7,
-            'B+': 3.3, 'B': 3.0, 'B-': 2.7,
-            'C+': 2.3, 'C': 2.0, 'C-': 1.7,
-            'D+': 1.3, 'D': 1.0, 'D-': 0.7,
-            'F': 0.0
-        };
+    <div class="grade-scale">
+      <h2>Customize Grade Scale</h2>
+      <button onclick="resetGradeScale()">Reset to Default</button>
+      <table id="gradeScaleTable">
+        <thead>
+          <tr><th>Grade</th><th>GPA Value</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 
-        // --- Global State ---
-        let currentGradePoints = {}; // Will be populated from localStorage or default
-        // Ensure gradeOptions consistently uses keys from defaultGradePoints for initial setup
-        const gradeOptions = Object.keys(defaultGradePoints).sort((a, b) => {
-            // Custom sort to keep A+ at top, then A, A-, B+, etc.
-            const order = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
-            return order.indexOf(a) - order.indexOf(b);
+  <script>
+    const defaultGrades = {
+      'A+': 4.0, 'A': 4.0, 'A-': 3.7,
+      'B+': 3.3, 'B': 3.0, 'B-': 2.7,
+      'C+': 2.3, 'C': 2.0, 'C-': 1.7,
+      'D+': 1.3, 'D': 1.0, 'D-': 0.7,
+      'F': 0.0
+    };
+    let gradeScale = JSON.parse(localStorage.getItem('gradeScale')) || { ...defaultGrades };
+
+    function updateLocalGradeScale() {
+      localStorage.setItem('gradeScale', JSON.stringify(gradeScale));
+      renderGradeScale();
+    }
+
+    function resetGradeScale() {
+      gradeScale = { ...defaultGrades };
+      updateLocalGradeScale();
+    }
+
+    function renderGradeScale() {
+      const tbody = document.querySelector('#gradeScaleTable tbody');
+      tbody.innerHTML = '';
+      for (let grade in gradeScale) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${grade}</td>
+          <td><input type="number" step="0.1" value="${gradeScale[grade]}" onchange="gradeScale['${grade}']=parseFloat(this.value); updateLocalGradeScale()"></td>`;
+        tbody.appendChild(row);
+      }
+    }
+
+    let semesterId = 0;
+
+    function addSemester() {
+      const container = document.getElementById('semesterContainer');
+      const semesterDiv = document.createElement('div');
+      semesterDiv.className = 'semester';
+      semesterDiv.id = `semester-${semesterId}`;
+      semesterDiv.innerHTML = `
+        <h3>Semester ${semesterId + 1}</h3>
+        <button onclick="addCourse(${semesterId})">Add Course</button>
+        <button onclick="removeSemester(${semesterId})">Remove Semester</button>
+        <table class="course-table">
+          <thead><tr><th>Course</th><th>Grade</th><th>Credits</th><th>Action</th></tr></thead>
+          <tbody id="courses-${semesterId}"></tbody>
+        </table>
+      `;
+      container.appendChild(semesterDiv);
+      addCourse(semesterId);
+      semesterId++;
+    }
+
+    function removeSemester(id) {
+      const sem = document.getElementById(`semester-${id}`);
+      if (sem) {
+        sem.remove();
+        updateReport();
+      }
+    }
+
+    function addCourse(semId) {
+      const courseRow = document.createElement('tr');
+      const gradeOptions = Object.keys(gradeScale).map(g => `<option value="${g}">${g}</option>`).join('');
+      courseRow.innerHTML = `
+        <td><input placeholder="Course Name"></td>
+        <td><select>${gradeOptions}</select></td>
+        <td><input type="number" step="0.1" min="0"></td>
+        <td><button onclick="this.closest('tr').remove(); updateReport()">Remove</button></td>
+      `;
+      document.getElementById(`courses-${semId}`).appendChild(courseRow);
+      courseRow.querySelectorAll('input,select').forEach(el => el.addEventListener('change', updateReport));
+    }
+
+    function updateReport() {
+      let totalPoints = 0, totalCredits = 0;
+      const report = document.getElementById('reportOutput');
+      report.innerHTML = '';
+      document.querySelectorAll('.semester').forEach((sem, i) => {
+        let semPoints = 0, semCredits = 0;
+        const rows = sem.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+          const grade = row.children[1].querySelector('select').value;
+          const credits = parseFloat(row.children[2].querySelector('input').value);
+          if (!isNaN(credits) && gradeScale[grade] != null) {
+            semCredits += credits;
+            semPoints += credits * gradeScale[grade];
+          }
         });
-        let semesterCount = 0; // Tracks the number of semesters added
+        const semGPA = semCredits ? (semPoints / semCredits).toFixed(2) : '0.00';
+        totalCredits += semCredits;
+        totalPoints += semPoints;
+        report.innerHTML += `<p><strong>Semester ${i + 1} GPA:</strong> ${semGPA}</p>`;
+      });
+      const overallGPA = totalCredits ? (totalPoints / totalCredits).toFixed(2) : '0.00';
+      report.innerHTML += `<hr><p><strong>Cumulative GPA:</strong> ${overallGPA}</p>`;
+    }
 
-        // --- Utility Functions ---
-
-        /**
-         * Displays a message in a specified message box element.
-         * @param {HTMLElement} element The message box DOM element.
-         * @param {string} message The text message to display.
-         * @param {string} type The type of message ('success', 'error', 'info').
-         */
-        function showMessage(element, message, type) {
-            element.textContent = message;
-            element.className = `message-box ${type}`;
-            element.style.display = 'block';
-            setTimeout(() => {
-                element.style.display = 'none';
-            }, 5000); // Hide after 5 seconds
-        }
-
-        /**
-         * Populates a select element with grade options.
-         * @param {HTMLSelectElement} selectElement The select element to populate.
-         */
-        function populateGradeDropdown(selectElement) {
-            selectElement.innerHTML = '<option value="">Select Grade</option>';
-            // Use the sorted gradeOptions for consistency
-            gradeOptions.forEach(grade => {
-                const option = document.createElement('option');
-                option.value = grade;
-                option.textContent = grade;
-                selectElement.appendChild(option);
-            });
-        }
-
-        // --- Grade Point Configuration Logic ---
-
-        /**
-         * Loads custom grade points from localStorage or uses defaults.
-         * Populates the configuration UI inputs.
-         */
-        function loadGradePointsConfig() {
-            try {
-                const savedPoints = JSON.parse(localStorage.getItem('gpaCustomGradePoints'));
-                // Merge saved points with default to handle cases where new grades might be introduced
-                currentGradePoints = { ...defaultGradePoints, ...savedPoints };
-            } catch (e) {
-                console.error("Error loading custom grade points from localStorage:", e);
-                currentGradePoints = { ...defaultGradePoints };
-            }
-
-            gradePointsConfigDiv.innerHTML = ''; // Clear previous inputs
-            gradeOptions.forEach(grade => { // Iterate over sorted options
-                const div = document.createElement('div');
-                div.className = 'flex items-center gap-2';
-                // Use a valid ID format for HTML: replace non-alphanumeric chars for consistency
-                const inputId = `grade-${grade.replace(/\W/g, '')}`;
-                div.innerHTML = `
-                    <label for="${inputId}" class="text-gray-600 font-medium">${grade}:</label>
-                    <input type="number" id="${inputId}"
-                           value="${currentGradePoints[grade] || 0}" step="0.1" min="0" max="5.0"
-                           class="w-20 text-center !p-1 !text-sm">
-                `;
-                gradePointsConfigDiv.appendChild(div);
-            });
-        }
-
-        /**
-         * Saves custom grade points from the UI inputs to localStorage.
-         */
-        function saveGradePoints() {
-            const newGradePoints = {};
-            let isValid = true;
-            gradeOptions.forEach(grade => { // Iterate over sorted options
-                const inputId = `grade-${grade.replace(/\W/g, '')}`;
-                const inputElement = document.getElementById(inputId);
-                if (inputElement) {
-                    const value = parseFloat(inputElement.value);
-                    if (isNaN(value) || value < 0 || value > 5.0) {
-                        showMessage(configMessageBox, `Invalid point value for ${grade}. Must be between 0 and 5.0.`, 'error');
-                        isValid = false;
-                        return; // Stop processing on first error
-                    }
-                    newGradePoints[grade] = value;
-                }
-            });
-
-            if (isValid) {
-                currentGradePoints = newGradePoints;
-                localStorage.setItem('gpaCustomGradePoints', JSON.stringify(currentGradePoints));
-                showMessage(configMessageBox, 'Custom grade points saved successfully!', 'success');
-                // Re-populate dropdowns with updated points if needed
-                semestersContainer.querySelectorAll('.grade-select').forEach(populateGradeDropdown);
-                calculateGPA(); // Recalculate GPA with new points
-            }
-        }
-
-        // --- Semester Management Logic ---
-
-        /**
-         * Adds a new semester block to the calculator.
-         */
-        function addSemester() {
-            semesterCount++;
-            const semesterDiv = document.createElement('div');
-            semesterDiv.id = `semester-${semesterCount}`;
-            semesterDiv.className = 'semester-block border border-gray-200 rounded-lg shadow-sm overflow-hidden';
-            semesterDiv.innerHTML = `
-                <div class="semester-header">
-                    <span>Semester ${semesterCount}</span>
-                    <div class="flex gap-2">
-                        <button class="add-course-btn bg-blue-400 text-white hover:bg-blue-500 !px-3 !py-1 !text-sm">Add Course</button>
-                        <button class="remove-semester-btn bg-red-400 text-white hover:bg-red-500 !px-3 !py-1 !text-sm">Remove Semester</button>
-                    </div>
-                </div>
-                <div class="semester-courses p-4 space-y-3">
-                    <div class="text-sm font-medium text-gray-500 grid grid-cols-1 md:grid-cols-4 gap-3 mb-2 px-1">
-                        <div>Course Name</div>
-                        <div>Credits</div>
-                        <div>Grade</div>
-                        <div></div> <!-- For remove course button -->
-                    </div>
-                    <!-- Course rows will be added here -->
-                </div>
-            `;
-            semestersContainer.appendChild(semesterDiv);
-
-            // Add event listeners for new semester's buttons
-            semesterDiv.querySelector('.add-course-btn').addEventListener('click', () => addCourse(semesterDiv.querySelector('.semester-courses')));
-            semesterDiv.querySelector('.remove-semester-btn').addEventListener('click', () => removeSemester(semesterDiv));
-
-            // Add the first course to the new semester
-            addCourse(semesterDiv.querySelector('.semester-courses'));
-
-            showMessage(resultMessageBox, `Semester ${semesterCount} added.`, 'info');
-        }
-
-        /**
-         * Removes a specific semester block.
-         * @param {HTMLElement} semesterDiv The div element of the semester to remove.
-         */
-        function removeSemester(semesterDiv) {
-            // Check if there are multiple semesters before allowing removal
-            // The first child is the "Add Semester" button/div, so count needs to be > 1
-            if (semestersContainer.querySelectorAll('.semester-block').length <= 1) {
-                showMessage(resultMessageBox, "You must have at least one semester.", 'warning');
-                return;
-            }
-            semesterDiv.remove();
-            // Re-index semester numbers for display
-            semestersContainer.querySelectorAll('.semester-block').forEach((sem, index) => {
-                sem.querySelector('.semester-header span').textContent = `Semester ${index + 1}`;
-                sem.id = `semester-${index + 1}`; // Update ID for consistency
-            });
-            semesterCount = semestersContainer.querySelectorAll('.semester-block').length; // Update count based on actual elements
-            calculateGPA(); // Recalculate after removal
-            showMessage(resultMessageBox, `Semester removed.`, 'info');
-        }
-
-        /**
-         * Adds a new course row within a specific semester.
-         * @param {HTMLElement} coursesContainer The div element containing courses for a semester.
-         */
-        function addCourse(coursesContainer) {
-            const courseRow = document.createElement('div');
-            courseRow.className = 'course-row';
-            courseRow.innerHTML = `
-                <input type="text" placeholder="Course Name" class="course-name">
-                <input type="number" placeholder="Credits (e.g., 3)" min="0" step="0.5" class="course-credits">
-                <select class="grade-select"></select>
-                <button class="remove-course-btn bg-red-400 text-white hover:bg-red-500 !px-3 !py-1 !text-sm w-full md:w-auto">Remove</button>
-            `;
-            coursesContainer.appendChild(courseRow);
-
-            populateGradeDropdown(courseRow.querySelector('.grade-select'));
-
-            courseRow.querySelector('.remove-course-btn').addEventListener('click', (event) => {
-                // Ensure there's always at least one course per semester
-                // The first child of coursesContainer is the header row for courses
-                if (coursesContainer.querySelectorAll('.course-row').length <= 1) {
-                    showMessage(resultMessageBox, 'Each semester must have at least one course.', 'warning');
-                    return;
-                }
-                courseRow.remove();
-                calculateGPA(); // Recalculate after course removal
-                showMessage(resultMessageBox, 'Course removed.', 'info');
-            });
-
-            // Add event listeners for input changes to trigger recalculation
-            courseRow.querySelectorAll('input, select').forEach(input => {
-                input.addEventListener('change', calculateGPA);
-                input.addEventListener('input', calculateGPA); // For continuous updates
-            });
-        }
-
-        // --- GPA Calculation Logic ---
-
-        /**
-         * Calculates the cumulative GPA based on all courses.
-         */
-        function calculateGPA() {
-            let totalCredits = 0;
-            let totalGradePoints = 0;
-            let hasError = false;
-
-            // Get all course rows from all semesters
-            const allCourseRows = semestersContainer.querySelectorAll('.course-row');
-
-            if (allCourseRows.length === 0) {
-                calculatedGPADisplay.textContent = '0.00';
-                // Only show message if user tries to calculate with no courses
-                // showMessage(resultMessageBox, 'Please add courses to calculate GPA.', 'info');
-                return;
-            }
-
-            allCourseRows.forEach(row => {
-                const creditsInput = row.querySelector('.course-credits');
-                const gradeSelect = row.querySelector('.grade-select');
-
-                const credits = parseFloat(creditsInput.value);
-                const grade = gradeSelect.value;
-
-                if (isNaN(credits) || credits <= 0) {
-                    creditsInput.classList.add('border-red-500', 'ring-red-500'); // Highlight error with ring
-                    hasError = true;
-                } else {
-                    creditsInput.classList.remove('border-red-500', 'ring-red-500');
-                }
-
-                if (!grade || !currentGradePoints.hasOwnProperty(grade)) {
-                    gradeSelect.classList.add('border-red-500', 'ring-red-500'); // Highlight error with ring
-                    hasError = true;
-                } else {
-                    gradeSelect.classList.remove('border-red-500', 'ring-red-500');
-                }
-
-                if (!isNaN(credits) && credits > 0 && grade && currentGradePoints.hasOwnProperty(grade)) {
-                    const points = currentGradePoints[grade];
-                    totalCredits += credits;
-                    totalGradePoints += (credits * points);
-                }
-            });
-
-            if (hasError) {
-                calculatedGPADisplay.textContent = 'N/A';
-                showMessage(resultMessageBox, 'Please correct highlighted errors (invalid credits or missing grades).', 'error');
-                return;
-            }
-
-            if (totalCredits === 0) {
-                calculatedGPADisplay.textContent = '0.00';
-                showMessage(resultMessageBox, 'Add course credits to calculate GPA.', 'info');
-                return;
-            }
-
-            const gpa = totalGradePoints / totalCredits;
-            calculatedGPADisplay.textContent = gpa.toFixed(2);
-            // Only show success message if not triggered by input change and has errors
-            if (!hasError) {
-                showMessage(resultMessageBox, 'GPA calculated successfully!', 'success');
-            }
-        }
-
-        // --- Reset Logic ---
-
-        /**
-         * Resets the entire calculator to its initial state.
-         */
-        function resetCalculator() {
-            localStorage.removeItem('gpaCustomGradePoints'); // Clear saved custom points
-            currentGradePoints = { ...defaultGradePoints }; // Reset to default
-            loadGradePointsConfig(); // Reload config UI
-
-            semestersContainer.innerHTML = ''; // Clear all semesters
-            semesterCount = 0; // Reset semester count
-            addSemester(); // Add initial semester
-
-            calculatedGPADisplay.textContent = '0.00'; // Reset GPA display
-            showMessage(resultMessageBox, 'Calculator reset to default. Custom grade points reverted.', 'info');
-        }
-
-        // --- Initialization ---
-
-        /**
-         * Initializes the calculator when the page loads.
-         */
-        function init() {
-            loadGradePointsConfig(); // Load and display grade points configuration
-            addSemester(); // Add the first semester on load
-            calculateGPA(); // Calculate initial GPA (will be 0.00)
-        }
-
-        // --- Event Listeners ---
-        saveGradePointsBtn.addEventListener('click', saveGradePoints);
-        addSemesterBtn.addEventListener('click', addSemester);
-        calculateGPABtn.addEventListener('click', calculateGPA);
-        resetCalculatorBtn.addEventListener('click', resetCalculator);
-
-        // Initialize the calculator on page load
-        window.addEventListener('load', init);
-
-    </script>
+    window.addEventListener('beforeprint', updateReport);
+    renderGradeScale();
+  </script>
 </body>
 </html>
