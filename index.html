@@ -207,9 +207,18 @@
             position: relative;
         }
         .semester h3 {
-            margin-top: -5px; /* Adjust spacing for semester heading */
+            margin-top: 0; /* Adjust spacing for semester heading */
             margin-bottom: 15px;
+            text-align: center;
+            cursor: pointer; /* Indicate it's editable */
         }
+        .semester h3:hover {
+            text-decoration: underline; /* Visual cue for editability */
+        }
+        .semester h3.editing {
+            cursor: text; /* Change cursor when editing */
+        }
+
         .semester-controls {
             display: flex;
             justify-content: center;
@@ -264,6 +273,8 @@
             color: var(--text-dark);
             margin-bottom: 8px;
             font-weight: 500;
+            text-align: left; /* Align semester GPA items left */
+            padding-left: 10%; /* Indent for better readability */
         }
         .semester-gpa-item strong {
             color: var(--primary-light);
@@ -298,6 +309,16 @@
         .message.info { background-color: #dbeafe; color: #3b82f6; border: 1px solid #93c5fd; }
         .message.warning { background-color: #fffbeb; color: var(--warning-color); border: 1px solid #fcd34d; }
 
+        /* Watermark style */
+        #watermark {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.75rem;
+            color: rgba(0, 0, 0, 0.2); /* Subtle grey, semi-transparent */
+            z-index: 9999; /* Ensure it's on top */
+            pointer-events: none; /* Allow clicks to pass through */
+        }
 
         @media (max-width: 768px) {
             body {
@@ -334,6 +355,9 @@
             .overall-gpa {
                 font-size: 3rem;
             }
+            .semester-gpa-item {
+                padding-left: 5%; /* Adjust indent for smaller screens */
+            }
         }
         @media (max-width: 480px) {
             .container {
@@ -348,72 +372,81 @@
             .report button {
                 width: 100%;
             }
-            .grade-scale table {
-                display: block;
-                overflow-x: auto; /* Make table scrollable */
-                white-space: nowrap;
-                -webkit-overflow-scrolling: touch;
-            }
-            .grade-scale table thead, .grade-scale table tbody, .grade-scale table tr, .grade-scale table th, .grade-scale table td {
-                display: block; /* Stack table elements */
-            }
-            .grade-scale table tr {
-                margin-bottom: 10px;
-                border: 1px solid var(--border-light);
-                border-radius: 8px;
-            }
-            .grade-scale table td {
-                border: none;
-                text-align: left;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px 15px;
-            }
-            .grade-scale table td:first-child {
-                border-top-left-radius: 8px;
-                border-top-right-radius: 8px;
-            }
-            .grade-scale table td:last-child {
-                border-bottom-left-radius: 8px;
-                border-bottom-right-radius: 8px;
-            }
-             .grade-scale table th {
-                display: none; /* Hide header for stacked view */
-            }
-            .grade-scale input[type="number"] {
-                width: 100px; /* Allow more space for input */
-            }
-            .course-table thead, .course-table tbody, .course-table tr, .course-table th, .course-table td {
+            
+            /* General table styling for mobile: stacking rows */
+            table thead, table tbody, table tr {
                 display: block;
                 width: 100%;
             }
-            .course-table tr {
-                margin-bottom: 15px;
-                border: 1px solid var(--border-light);
-                border-radius: 10px;
+            table th {
+                display: none; /* Hide original headers */
             }
-            .course-table td {
-                text-align: left;
-                padding: 10px 15px;
-                border: none;
+            table td {
+                display: flex; /* Flexbox for labels and values */
+                justify-content: space-between;
+                align-items: center;
+                padding: 12px 15px; /* More padding for readability */
+                border: none; /* Remove individual cell borders for stacked look */
             }
-            .course-table td:nth-child(even) {
-                background-color: #f8fafd; /* Slight stripe for readability */
+            table tr {
+                margin-bottom: 15px; /* Space between stacked rows */
+                border: 1px solid var(--border-light); /* Individual border for each row */
+                border-radius: 10px; /* Rounded corners for each row */
+                overflow: hidden; /* For consistent border-radius */
+                background-color: var(--card-bg); /* Ensure background is white */
+                box-shadow: 0 4px 12px var(--shadow-light); /* Subtle shadow for each row */
             }
-            .course-table td:first-child { border-top-left-radius: 10px; border-top-right-radius: 10px; }
-            .course-table td:last-child { border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; }
-            .course-table th { display: none; } /* Hide headers for stacked view */
-            .course-table td:before {
-                content: attr(data-label); /* Show label for stacked view */
+            table td:last-child {
+                border-bottom: none; /* No bottom border for last cell in stacked row */
+            }
+
+            /* Labels for stacked cells (using data-label) */
+            table td:before {
+                content: attr(data-label);
                 font-weight: 600;
-                margin-right: 10px;
                 color: var(--primary-light);
+                margin-right: 15px; /* Space between label and input */
+                flex-shrink: 0; /* Prevent label from shrinking */
+            }
+            /* Specific adjustments for grade scale table */
+            .grade-scale table tbody tr {
+                border-radius: 8px; /* Slightly smaller radius for config items */
+                box-shadow: none; /* No extra shadow for config items */
+                background-color: var(--card-bg); /* Ensure white background for each grade item */
+            }
+            .grade-scale table td:first-child {
+                font-weight: 600; /* Make grade letter bold */
+                color: var(--text-dark);
+            }
+            .grade-scale table td input[type="number"] {
+                width: 80px; /* Adjust input width for mobile */
+                text-align: right; /* Align value to the right */
+                flex-grow: 1; /* Allow input to take available space */
+            }
+
+            /* Course Table Specifics for mobile */
+            .course-table td:nth-child(even) {
+                background-color: #f8fafd; /* Subtle stripe for readability in course rows */
+            }
+            .course-table td input[type="text"],
+            .course-table td input[type="number"],
+            .course-table td select {
+                width: auto; /* Allow inputs to size naturally within flex */
+                flex-grow: 1; /* Fill remaining space */
+                text-align: right; /* Align inputs/selects to the right */
+            }
+            .course-table td:last-child {
+                justify-content: center; /* Center remove button */
+                padding-top: 5px; /* Reduce padding above button if needed */
+                padding-bottom: 5px;
+            }
+            .course-table button {
+                margin: 0; /* Remove button specific margins for stacking */
+                width: 100%; /* Make remove button full width */
             }
         }
 
-
-        /* Print specific styles */
+        /* --- PRINT STYLES --- */
         @media print {
             body {
                 background: white;
@@ -442,9 +475,16 @@
             h3 { font-size: 1.2rem; margin-bottom: 10px; }
             h2::after { display: none; } /* Hide underline */
 
-            button, .grade-scale, .message {
-                display: none !important; /* Hide non-essential elements */
+            /* Hide all functional elements and input sections */
+            button,
+            .semester-controls,
+            .grade-scale,
+            .message,
+            .semesters { /* Hide the entire input section */
+                display: none !important;
             }
+
+            /* Report section styling for print */
             .report {
                 background: none;
                 box-shadow: none;
@@ -463,7 +503,13 @@
                 width: 100%;
                 margin: 15px 0;
             }
-            .semester {
+            .semester-gpa-item {
+                text-align: left !important;
+                padding-left: 0 !important;
+            }
+
+            /* Print-specific semester detail styling */
+            .print-semester-detail { /* This is the new div wrapping print tables */
                 background: #f0f8ff; /* Light background for semester blocks */
                 border: 1px solid #cce7ff;
                 box-shadow: none;
@@ -472,31 +518,51 @@
                 page-break-inside: avoid;
                 margin-bottom: 15px;
             }
-            .semester h3 {
+            .print-semester-detail h3 {
                 text-align: left;
+                cursor: auto;
+                text-decoration: none !important;
             }
-            table {
+            
+            /* Watermark for print */
+            #watermark {
+                position: fixed; /* Use fixed for print, works across pages */
+                bottom: 10px;
+                right: 10px;
+                font-size: 0.75rem;
+                color: rgba(0, 0, 0, 0.4); /* Slightly darker for print legibility */
+                z-index: 9999;
+                pointer-events: none;
+            }
+
+            /* Table styling specifically for the generated print tables */
+            .course-table.print-table { /* Target the table generated for print */
                 border-radius: 0;
                 margin: 10px 0;
+                border-collapse: collapse;
+                display: table; /* Ensure table structure is back */
             }
-            th {
+            .course-table.print-table thead th {
                 background: #e0f2f7 !important;
                 color: #000 !important;
-                border-bottom: 1px solid #aed6f1 !important;
-                border-left: 1px solid #e0e0e0 !important;
-                border-right: 1px solid #e0e0e0 !important;
+                border: 1px solid #ccc !important;
+                padding: 8px 10px;
+                display: table-cell !important; /* Ensure headers are visible */
             }
-            td {
+            .course-table.print-table tbody td {
                 background: white !important;
-                border-bottom: 1px dashed #e0e0e0 !important;
-                border-left: 1px solid #e0e0e0 !important;
-                border-right: 1px solid #e0e0e0 !important;
+                border: 1px solid #ccc !important;
+                padding: 8px 10px;
+                text-align: left !important; /* Align cell content left */
+                display: table-cell !important; /* Ensure cells are visible */
             }
-            table thead tr:first-child th:first-child { border-top-left-radius: 0; }
-            table thead tr:first-child th:last-child { border-top-right-radius: 0; }
-            table tbody tr:last-child td:first-child { border-bottom-left-radius: 0; }
-            table tbody tr:last-child td:last-child { border-bottom-right-radius: 0; }
-            .course-table td:before { display: none; } /* Hide labels for print */
+            /* Remove specific rounded corners for print tables */
+            .course-table.print-table thead tr:first-child th:first-child,
+            .course-table.print-table thead tr:first-child th:last-child,
+            .course-table.print-table tbody tr:last-child td:first-child,
+            .course-table.print-table tbody tr:last-child td:last-child {
+                border-radius: 0 !important;
+            }
         }
     </style>
 </head>
@@ -511,13 +577,14 @@
                 <p class="overall-gpa">0.00</p>
                 <hr>
                 </div>
-            <button onclick="window.print()">Print GPA Report</button>
+            <button id="printReportBtn" onclick="window.print()">Print GPA Report</button>
         </div>
 
         <div class="semesters">
             <h2>Semesters</h2>
             <div class="semester-controls">
                 <button onclick="addSemester()">Add New Semester</button>
+                <button id="resetAllDataBtn">Reset All Data</button>
             </div>
             <div id="semesterContainer"></div>
         </div>
@@ -538,6 +605,10 @@
         </div>
     </div>
 
+    <div id="watermark">
+        &copy; 2025 Renolson
+    </div>
+
     <script>
         // Default grade point values for common scales
         const defaultGrades = {
@@ -550,6 +621,8 @@
 
         // Load grade scale from local storage or use defaults
         let gradeScale = JSON.parse(localStorage.getItem('smartGpaGradeScale')) || { ...defaultGrades };
+        // Storage for custom semester names { id: "Custom Name" }
+        let semesterNames = JSON.parse(localStorage.getItem('smartGpaSemesterNames')) || {};
 
         // Helper function to display messages
         function showMessage(elementId, msg, type) {
@@ -559,6 +632,11 @@
             setTimeout(() => {
                 el.classList.remove('show');
             }, 5000);
+        }
+
+        // Saves semester names to localStorage
+        function saveSemesterNames() {
+            localStorage.setItem('smartGpaSemesterNames', JSON.stringify(semesterNames));
         }
 
         // Updates local storage with current grade scale and re-renders
@@ -591,38 +669,54 @@
             orderedGrades.forEach(grade => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${grade}</td>
-                    <td><input type="number" step="0.1" min="0" max="5.0" value="${gradeScale[grade]}" 
+                    <td data-label="Grade">${grade}</td>
+                    <td data-label="GPA Value"><input type="number" step="0.1" min="0" max="5.0" value="${gradeScale[grade]}" 
                                onchange="gradeScale['${grade}']=parseFloat(this.value); updateReport();"></td>
                 `;
                 tbody.appendChild(row);
             });
         }
 
-        let semesterCount = 0; // Tracks the number of semesters added
+        let semesterGlobalIdCounter = 0; // Tracks unique IDs for semesters across sessions
 
         // Adds a new semester block
         function addSemester() {
-            semesterCount++;
+            semesterGlobalIdCounter++;
+            const currentSemesterId = semesterGlobalIdCounter; 
             const container = document.getElementById('semesterContainer');
             const semesterDiv = document.createElement('div');
             semesterDiv.className = 'semester';
-            semesterDiv.id = `semester-${semesterCount}`; // Use semesterCount for unique ID
+            semesterDiv.id = `semester-${currentSemesterId}`; 
+
+            // Get semester name from storage or set default
+            const initialSemesterName = semesterNames[currentSemesterId] || `Semester ${currentSemesterId}`;
+
             semesterDiv.innerHTML = `
-                <h3>Semester ${semesterCount}</h3>
+                <h3 contenteditable="true" onblur="updateSemesterName(${currentSemesterId}, this.textContent, this)"
+                    onkeydown="if(event.key === 'Enter') { this.blur(); event.preventDefault(); }"
+                    title="Click to rename" class="semester-title">${initialSemesterName}</h3>
                 <div class="semester-controls">
-                    <button onclick="addCourse(${semesterCount})">Add Course</button>
-                    <button onclick="removeSemester(${semesterCount})">Remove Semester</button>
+                    <button onclick="addCourse(${currentSemesterId})">Add Course</button>
+                    <button onclick="removeSemester(${currentSemesterId})">Remove Semester</button>
                 </div>
                 <table class="course-table">
                     <thead><tr><th>Course</th><th>Grade</th><th>Credits</th><th>Action</th></tr></thead>
-                    <tbody id="courses-${semesterCount}"></tbody>
+                    <tbody id="courses-${currentSemesterId}"></tbody>
                 </table>
             `;
             container.appendChild(semesterDiv);
-            addCourse(semesterCount); // Add first course to the new semester
+            addCourse(currentSemesterId); // Add first course to the new semester
             updateReport();
-            showMessage('reportMessage', `Semester ${semesterCount} added!`, 'info');
+            showMessage('reportMessage', `Semester "${initialSemesterName}" added! ✨`, 'info');
+        }
+
+        // Updates semester name and saves to localStorage
+        function updateSemesterName(id, newName, element) {
+            const trimmedName = newName.trim();
+            semesterNames[id] = trimmedName;
+            element.textContent = trimmedName; // Ensure the element's text is clean
+            saveSemesterNames();
+            updateReport(); // Update report to show new name
         }
 
         // Removes a specific semester block
@@ -635,20 +729,41 @@
             const sem = document.getElementById(`semester-${id}`);
             if (sem) {
                 sem.remove();
-                // Re-index semester headings for display after removal
-                document.querySelectorAll('.semester').forEach((s, index) => {
-                    s.id = `semester-${index + 1}`; // Update ID
-                    s.querySelector('h3').textContent = `Semester ${index + 1}`; // Update display
+                
+                // Re-index remaining semesters to ensure continuous IDs
+                const newSemesterNames = {};
+                let newIndex = 1;
+                document.querySelectorAll('.semester').forEach((s) => {
+                    const oldId = parseInt(s.id.split('-')[1]); // Get old ID from DOM
+                    const newId = newIndex;
+                    
+                    s.id = `semester-${newId}`; // Update DOM ID
+                    
+                    // Transfer or create new semester name based on old ID's name
+                    if (semesterNames[oldId]) {
+                        newSemesterNames[newId] = semesterNames[oldId];
+                    } else {
+                        newSemesterNames[newId] = `Semester ${newId}`; // Default name if no custom name existed
+                    }
+                    s.querySelector('.semester-title').textContent = newSemesterNames[newId]; // Update display
+                    s.querySelector('.semester-title').setAttribute('onblur', `updateSemesterName(${newId}, this.textContent, this)`);
+
+
                     // Update the `semId` in addCourse and removeSemester calls
                     const addCourseBtn = s.querySelector('button[onclick^="addCourse"]');
                     const removeSemesterBtn = s.querySelector('button[onclick^="removeSemester"]');
                     const courseTbody = s.querySelector('tbody[id^="courses-"]');
 
-                    if (addCourseBtn) addCourseBtn.setAttribute('onclick', `addCourse(${index + 1})`);
-                    if (removeSemesterBtn) removeSemesterBtn.setAttribute('onclick', `removeSemester(${index + 1})`);
-                    if (courseTbody) courseTbody.id = `courses-${index + 1}`;
+                    if (addCourseBtn) addCourseBtn.setAttribute('onclick', `addCourse(${newId})`);
+                    if (removeSemesterBtn) removeSemesterBtn.setAttribute('onclick', `removeSemester(${newId})`);
+                    if (courseTbody) courseTbody.id = `courses-${newId}`;
+
+                    newIndex++;
                 });
-                semesterCount = semesters.length - 1; // Decrement global count
+                semesterNames = newSemesterNames; // Update global semesterNames
+                saveSemesterNames(); // Save re-indexed names
+                semesterGlobalIdCounter = newIndex - 1; // Update global counter
+                
                 updateReport();
                 showMessage('reportMessage', `Semester removed! 👋`, 'info');
             }
@@ -673,7 +788,12 @@
                 <td data-label="Action"><button onclick="this.closest('tr').remove(); updateReport()">Remove</button></td>
             `;
             courseTbody.appendChild(courseRow);
-            courseRow.querySelectorAll('input, select').forEach(el => el.addEventListener('input', updateReport)); // Use 'input' for live updates
+            
+            // Add listeners for changes to trigger report update and data save
+            courseRow.querySelectorAll('input, select').forEach(el => {
+                el.addEventListener('input', updateReport);
+                el.addEventListener('change', updateReport); // Ensure change is caught too
+            });
             updateReport(); // Update report after adding a new course
         }
 
@@ -684,40 +804,70 @@
             const semesterReports = [];
             let hasInputErrors = false;
 
-            document.querySelectorAll('.semester').forEach((sem, semIndex) => {
+            document.querySelectorAll('.semester').forEach((semDiv) => {
                 let semesterPoints = 0;
                 let semesterCredits = 0;
-                const rows = sem.querySelectorAll('tbody tr');
+                const rows = semDiv.querySelectorAll('tbody tr');
+                const semesterId = parseInt(semDiv.id.split('-')[1]);
+                const semesterName = semesterNames[semesterId] || `Semester ${semesterId}`;
+
+                // Store individual course data for print table
+                const coursesForThisSemester = [];
 
                 rows.forEach(row => {
+                    const courseNameInput = row.children[0].querySelector('input');
                     const gradeSelect = row.children[1].querySelector('select');
                     const creditsInput = row.children[2].querySelector('input');
 
                     // Reset error highlighting
+                    courseNameInput.classList.remove('error');
                     gradeSelect.classList.remove('error');
                     creditsInput.classList.remove('error');
 
+                    const courseName = courseNameInput.value.trim();
                     const grade = gradeSelect.value;
                     const credits = parseFloat(creditsInput.value);
 
                     const gradeValue = gradeScale[grade];
 
-                    if (isNaN(credits) || credits <= 0 || !grade || gradeValue == null) {
+                    let rowHasError = false;
+                    if (isNaN(credits) || credits <= 0) {
+                        creditsInput.classList.add('error');
+                        rowHasError = true;
+                    }
+                    if (!grade || gradeValue == null) {
+                        gradeSelect.classList.add('error');
+                        rowHasError = true;
+                    }
+                    // No error for empty course name, but good to ensure it's not empty string
+                    // if (!courseName) { /* could add error for empty name if required */ }
+
+                    if (rowHasError) {
                         hasInputErrors = true;
-                        if (isNaN(credits) || credits <= 0) {
-                            creditsInput.classList.add('error');
-                        }
-                        if (!grade || gradeValue == null) {
-                            gradeSelect.classList.add('error');
-                        }
                     } else {
                         semesterCredits += credits;
                         semesterPoints += credits * gradeValue;
                     }
+                    
+                    // Store original values as data attributes for printing
+                    // Ensure courseName is not empty, use placeholder if so
+                    row.children[0].setAttribute('data-original-value', courseName || 'Unnamed Course');
+                    row.children[1].setAttribute('data-original-value', grade || 'No Grade');
+                    row.children[2].setAttribute('data-original-value', isNaN(credits) ? '0.0' : credits.toFixed(1));
+
+                    coursesForThisSemester.push({
+                        name: courseName || 'Unnamed Course',
+                        grade: grade || 'No Grade',
+                        credits: isNaN(credits) ? '0.0' : credits.toFixed(1)
+                    });
                 });
 
                 const semesterGPA = semesterCredits > 0 ? (semesterPoints / semesterCredits).toFixed(2) : '0.00';
-                semesterReports.push(`<p class="semester-gpa-item"><strong>Semester ${semIndex + 1} GPA:</strong> ${semesterGPA}</p>`);
+                semesterReports.push({
+                    name: semesterName,
+                    gpa: semesterGPA,
+                    courses: coursesForThisSemester
+                });
 
                 totalOverallCredits += semesterCredits;
                 totalOverallPoints += semesterPoints;
@@ -728,27 +878,184 @@
 
             if (hasInputErrors) {
                 showMessage('reportMessage', 'Please correct highlighted errors (invalid credits or missing grades) for accurate results. ⚠️', 'error');
-            } else if (totalOverallCredits === 0 && semesterCount > 0) {
+            } else if (totalOverallCredits === 0 && semesterGlobalIdCounter > 0) {
                  showMessage('reportMessage', 'Add courses with valid credits and grades to calculate GPA. 📚', 'info');
-            } else if (totalOverallCredits === 0 && semesterCount === 0) {
+            } else if (totalOverallCredits === 0 && semesterGlobalIdCounter === 0) {
                  showMessage('reportMessage', 'Start by adding a semester and courses to calculate your GPA! 🚀', 'info');
             } else {
                  showMessage('reportMessage', 'GPA calculated successfully! 🎉', 'success');
             }
 
-            // Always display semester GPAs and overall GPA, even with errors, for transparency
-            semesterReports.forEach(reportHtml => {
-                reportOutputDiv.innerHTML += reportHtml;
+            // Display overall GPA (always present)
+            const overallGPA = totalOverallCredits > 0 ? (totalOverallPoints / totalOverallCredits).toFixed(2) : '0.00';
+            reportOutputDiv.innerHTML += `<p class="overall-gpa">${overallGPA}</p>`;
+            reportOutputDiv.innerHTML += `<hr>`;
+
+
+            // Display semester GPAs
+            semesterReports.forEach(semReport => {
+                reportOutputDiv.innerHTML += `<p class="semester-gpa-item"><strong>${semReport.name} GPA:</strong> ${semReport.gpa}</p>`;
             });
-            reportOutputDiv.innerHTML += `<hr><p class="overall-gpa">${totalOverallCredits > 0 ? (totalOverallPoints / totalOverallCredits).toFixed(2) : '0.00'}</p>`;
+            reportOutputDiv.innerHTML += `<hr>`; // Another separator before detailed tables
+
+            // Display detailed tables for each semester
+            semesterReports.forEach(semReport => {
+                let tableHtml = `
+                    <div class="print-semester-detail">
+                        <h3>${semReport.name} Details (GPA: ${semReport.gpa})</h3>
+                        <table class="course-table print-table">
+                            <thead>
+                                <tr>
+                                    <th>Course</th>
+                                    <th>Grade</th>
+                                    <th>Credits</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                semReport.courses.forEach(course => {
+                    tableHtml += `
+                                <tr>
+                                    <td>${course.name}</td>
+                                    <td>${course.grade}</td>
+                                    <td>${course.credits}</td>
+                                </tr>`;
+                });
+                tableHtml += `
+                            </tbody>
+                        </table>
+                    </div>`;
+                reportOutputDiv.innerHTML += tableHtml;
+            });
+
+
+            saveCalculatorData(); // Auto-save after every report update
         }
+
+        // Function to save ALL calculator data (semesters, courses, grades, names)
+        function saveCalculatorData() {
+            const allSemesterData = [];
+            document.querySelectorAll('.semester').forEach(semDiv => {
+                const semId = parseInt(semDiv.id.split('-')[1]);
+                const semesterName = semDiv.querySelector('.semester-title').textContent.trim();
+                const coursesInSemester = [];
+                semDiv.querySelectorAll('tbody tr').forEach(row => {
+                    const courseName = row.children[0].querySelector('input').value.trim();
+                    const grade = row.children[1].querySelector('select').value;
+                    const credits = parseFloat(row.children[2].querySelector('input').value);
+                    coursesInSemester.push({ name: courseName, grade: grade, credits: credits });
+                });
+                allSemesterData.push({ id: semId, name: semesterName, courses: coursesInSemester });
+            });
+            localStorage.setItem('smartGpaCalculatorData', JSON.stringify(allSemesterData));
+            localStorage.setItem('smartGpaSemesterNames', JSON.stringify(semesterNames)); // Ensure names are also explicitly saved
+            localStorage.setItem('smartGpaGlobalIdCounter', semesterGlobalIdCounter); // Save counter
+            // No need for message here, as it auto-saves frequently
+        }
+
+        // Function to load ALL calculator data (semesters, courses, grades, names) on init
+        function loadCalculatorData() {
+            const loadedData = JSON.parse(localStorage.getItem('smartGpaCalculatorData'));
+            const loadedNames = JSON.parse(localStorage.getItem('smartGpaSemesterNames'));
+            const loadedCounter = parseInt(localStorage.getItem('smartGpaGlobalIdCounter'));
+
+            if (loadedData && loadedData.length > 0) {
+                document.getElementById('semesterContainer').innerHTML = ''; // Clear existing semesters
+                semesterGlobalIdCounter = loadedCounter || 0; // Set counter from loaded data
+                semesterNames = loadedNames || {}; // Load names
+
+                loadedData.forEach(semData => {
+                    // Ensure the semester ID is recreated correctly to match the loaded data's ID
+                    // This is crucial for semesterNames and button onclicks
+                    const currentSemesterId = semData.id; 
+                    if (currentSemesterId > semesterGlobalIdCounter) { // Adjust global counter if loaded IDs are higher
+                        semesterGlobalIdCounter = currentSemesterId;
+                    }
+
+                    const container = document.getElementById('semesterContainer');
+                    const semesterDiv = document.createElement('div');
+                    semesterDiv.className = 'semester';
+                    semesterDiv.id = `semester-${currentSemesterId}`;
+                    
+                    const loadedName = semesterNames[currentSemesterId] || semData.name || `Semester ${currentSemesterId}`;
+                    semesterNames[currentSemesterId] = loadedName; // Ensure name is in current semesterNames
+
+                    semesterDiv.innerHTML = `
+                        <h3 contenteditable="true" onblur="updateSemesterName(${currentSemesterId}, this.textContent, this)"
+                            onkeydown="if(event.key === 'Enter') { this.blur(); event.preventDefault(); }"
+                            title="Click to rename" class="semester-title">${loadedName}</h3>
+                        <div class="semester-controls">
+                            <button onclick="addCourse(${currentSemesterId})">Add Course</button>
+                            <button onclick="removeSemester(${currentSemesterId})">Remove Semester</button>
+                        </div>
+                        <table class="course-table">
+                            <thead><tr><th>Course</th><th>Grade</th><th>Credits</th><th>Action</th></tr></thead>
+                            <tbody id="courses-${currentSemesterId}"></tbody>
+                        </table>
+                    `;
+                    container.appendChild(semesterDiv);
+                    const courseTbody = document.getElementById(`courses-${currentSemesterId}`);
+
+                    semData.courses.forEach(course => {
+                        const courseRow = document.createElement('tr');
+                        const gradeOptions = Object.keys(gradeScale).sort((a, b) => {
+                            const order = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F'];
+                            return order.indexOf(a) - order.indexOf(b);
+                        }).map(g => `<option value="${g}">${g}</option>`).join('');
+
+                        courseRow.innerHTML = `
+                            <td data-label="Course"><input type="text" placeholder="e.g., Calculus I" class="course-name" value="${course.name}"></td>
+                            <td data-label="Grade"><select class="grade-select">${gradeOptions}</select></td>
+                            <td data-label="Credits"><input type="number" step="0.5" min="0" class="course-credits" value="${course.credits}"></td>
+                            <td data-label="Action"><button onclick="this.closest('tr').remove(); updateReport()">Remove</button></td>
+                        `;
+                        courseTbody.appendChild(courseRow);
+                        courseRow.querySelector('.grade-select').value = course.grade; // Set selected grade
+                        
+                        courseRow.querySelectorAll('input, select').forEach(el => {
+                            el.addEventListener('input', updateReport);
+                            el.addEventListener('change', updateReport);
+                        });
+                    });
+                });
+                // After loading all semesters, ensure semesterGlobalIdCounter is correctly set to the highest ID
+                semesterGlobalIdCounter = document.querySelectorAll('.semester').length > 0
+                                            ? Math.max(...Array.from(document.querySelectorAll('.semester')).map(s => parseInt(s.id.split('-')[1])))
+                                            : 0;
+
+            } else {
+                addSemester(); // If no saved data, add the first semester fresh
+            }
+        }
+
+        // --- Global Reset Function ---
+        // This function combines resetting grade scale, all semester data, and the UI
+        function resetCalculatorFull() {
+            gradeScale = { ...defaultGrades }; // Reset grade scale in memory
+            localStorage.removeItem('smartGpaGradeScale'); // Clear saved grade scale
+            renderGradeScale(); // Update grade scale UI
+
+            localStorage.removeItem('smartGpaCalculatorData'); // Clear all semester data
+            localStorage.removeItem('smartGpaSemesterNames'); // Clear semester names
+            localStorage.removeItem('smartGpaGlobalIdCounter'); // Clear counter
+            
+            semesterNames = {}; // Reset semester names in memory
+            semesterGlobalIdCounter = 0; // Reset counter in memory
+            
+            document.getElementById('semesterContainer').innerHTML = ''; // Clear all semesters visually
+            addSemester(); // Add back one fresh semester
+            updateReport(); // Update report after full reset
+            showMessage('reportMessage', 'Calculator fully reset to default. All data cleared. 🔄', 'info');
+        }
+
+        // Assign the reset function to the button
+        document.getElementById('resetAllDataBtn').addEventListener('click', resetCalculatorFull);
 
 
         // Initial setup on page load
         document.addEventListener('DOMContentLoaded', () => {
             renderGradeScale(); // Render grade scale on load
-            addSemester(); // Add the first semester automatically
-            updateReport(); // Calculate initial GPA (will be 0.00)
+            loadCalculatorData(); // Load all saved semester and course data
+            updateReport(); // Initial report calculation
         });
     </script>
 </body>
